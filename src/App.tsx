@@ -20,6 +20,7 @@ import { User, Session } from './types.js';
 export default function App() {
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
   const isLandingHost = ['ezmindsphere.netlify.app', 'ezmindsphere.ejoetso.com'].includes(window.location.hostname);
+  const isCloudApp = isLandingHost && currentPath === '/app';
   const isTechStartupPage = currentPath === '/techstartup' || (isLandingHost && currentPath !== '/app');
   // App views: 'landing' | 'login' | 'dashboard' | 'join' | 'room' | 'summary' | 'live-participant'
   const [view, setView] = useState<'landing' | 'login' | 'dashboard' | 'admin' | 'join' | 'room' | 'summary' | 'live-participant'>('landing');
@@ -89,12 +90,17 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (isCloudApp) {
+      setLicenseActivated(true);
+      setLicenseChecked(true);
+      return;
+    }
     fetch('/api/license/status')
       .then(response => response.json())
       .then(data => setLicenseActivated(Boolean(data.activated)))
       .catch(() => setLicenseActivated(false))
       .finally(() => setLicenseChecked(true));
-  }, []);
+  }, [isCloudApp]);
 
   const verifyToken = async (token: string) => {
     try {
