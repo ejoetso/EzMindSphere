@@ -10,3 +10,6 @@ data/
 outputs/
 work/
 .video-tools/
+
+# Local Netlify folder
+.netlify

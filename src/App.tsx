@@ -18,7 +18,8 @@ import { useRealtimeSession } from './hooks/useRealtimeSession.js';
 import { User, Session } from './types.js';
 
 export default function App() {
-  const isTechStartupPage = window.location.pathname.replace(/\/$/, '') === '/techstartup';
+  const isLandingHost = ['ezmindsphere.netlify.app', 'ezmindsphere.ejoetso.com'].includes(window.location.hostname);
+  const isTechStartupPage = isLandingHost || window.location.pathname.replace(/\/$/, '') === '/techstartup';
   // App views: 'landing' | 'login' | 'dashboard' | 'join' | 'room' | 'summary' | 'live-participant'
   const [view, setView] = useState<'landing' | 'login' | 'dashboard' | 'admin' | 'join' | 'room' | 'summary' | 'live-participant'>('landing');
   const [authRole, setAuthRole] = useState<'educator' | 'student' | 'admin'>('student');

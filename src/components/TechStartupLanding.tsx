@@ -7,6 +7,7 @@ const features = [
   { icon: BarChart3, title: 'Poll Maker', copy: 'Create multiple-choice polls, collect responses live and reveal instant class results.' },
   { icon: QrCode, title: 'Join in seconds', copy: 'Students scan a dynamic QR code and participate from any modern phone.' },
   { icon: ShieldCheck, title: 'Institution ready', copy: 'Role-based access, local data persistence and activation-key licensing.' },
+  { icon: Layers3, title: 'Self-hosted or cloud', copy: 'Run on your institution’s own server or use a managed cloud implementation.' },
   { icon: Sparkles, title: 'AI learning support', copy: 'Generate summaries, quizzes and structured insights from classroom work.' },
   { icon: Layers3, title: 'One teaching canvas', copy: 'Move smoothly between 2D maps, 3D views, memos and live sessions.' },
 ];
@@ -30,7 +31,7 @@ export function TechStartupLanding() {
         <div>
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[.18em] text-cyan-200"><Sparkles size={14} /> The visual learning platform</div>
           <h1 className="max-w-3xl text-5xl font-black leading-[.96] tracking-[-.055em] sm:text-6xl lg:text-7xl">Make every classroom idea <span className="bg-gradient-to-r from-cyan-300 via-sky-300 to-indigo-400 bg-clip-text text-transparent">visible.</span></h1>
-          <p className="mt-7 max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">EzMindSphere helps educators build knowledge together, understand participation live and turn each session into a lasting learning resource.</p>
+          <p className="mt-7 max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">EzMindSphere helps educators build knowledge together, understand participation live and turn each session into a lasting learning resource—self-hosted at your institution or delivered as a managed cloud platform.</p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row"><a href="/" className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-cyan-300 px-6 py-3.5 font-black text-slate-950 shadow-xl shadow-cyan-500/20 transition hover:-translate-y-0.5">Open the platform <ArrowRight size={19} /></a><a href="#demo" className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/5 px-6 py-3.5 font-bold"><PlayCircle size={19} /> See the experience</a></div>
           <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm text-slate-400"><span className="flex items-center gap-2"><CheckCircle2 size={16} className="text-emerald-400" /> Free for eligible education</span><span className="flex items-center gap-2"><CheckCircle2 size={16} className="text-emerald-400" /> Mobile friendly</span></div>
         </div>
