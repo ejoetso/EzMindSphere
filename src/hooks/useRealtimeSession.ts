@@ -47,6 +47,7 @@ export interface UseRealtimeSessionReturn {
 }
 
 export function useRealtimeSession(): UseRealtimeSessionReturn {
+  const cloudMode = ['ezmindsphere.ejoetso.com', 'ezmindsphere.netlify.app'].includes(window.location.hostname);
   const [session, setSession] = useState<Session | null>(null);
   const [nodes, setNodes] = useState<MindMapNode[]>([]);
   const [edges, setEdges] = useState<MindMapEdge[]>([]);
@@ -65,6 +66,12 @@ export function useRealtimeSession(): UseRealtimeSessionReturn {
 
   // Connection handler
   const connect = useCallback((sessionId: string, user: User) => {
+    if (cloudMode) {
+      fetch(`/api/cloud/realtime/${sessionId}`).then(r => r.json()).then(data => {
+        if (data.session) { setSession(data.session); setNodes(data.nodes || []); setEdges(data.edges || []); setMemos(data.memos || []); setActivities(data.activities || []); setActiveActivityId(data.session.activeActivityId || null); setConnected(true); }
+      }).catch(() => setConnected(false));
+      return;
+    }
     if (socketRef.current) {
       socketRef.current.close();
     }
@@ -328,7 +335,7 @@ export function useRealtimeSession(): UseRealtimeSessionReturn {
     socket.onerror = (error) => {
       console.error('WebSocket Error:', error);
     };
-  }, []);
+  }, [cloudMode]);
 
   const joinSession = useCallback((sessionId: string, user: User) => {
     activeUserRef.current = user;
@@ -350,10 +357,14 @@ export function useRealtimeSession(): UseRealtimeSessionReturn {
 
   // Send operations helper
   const sendEvent = useCallback((event: string, data: any) => {
+    if (cloudMode && activeSessionIdRef.current) {
+      fetch(`/api/cloud/realtime/${activeSessionIdRef.current}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event, data }) }).catch(() => setConnected(false));
+      return;
+    }
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
       socketRef.current.send(JSON.stringify({ event, data }));
     }
-  }, []);
+  }, [cloudMode]);
 
   // Public Actions APIs
   const sendCursorMove = useCallback((x: number, y: number) => {
