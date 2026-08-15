@@ -13,10 +13,12 @@ import { StudySummaryView } from './components/StudySummaryView.js';
 import { LiveInteractionParticipantView } from './components/LiveInteractionParticipantView.js';
 import { AdminDashboard } from './components/AdminDashboard.js';
 import { ActivationScreen } from './components/ActivationScreen.js';
+import { TechStartupLanding } from './components/TechStartupLanding.js';
 import { useRealtimeSession } from './hooks/useRealtimeSession.js';
 import { User, Session } from './types.js';
 
 export default function App() {
+  const isTechStartupPage = window.location.pathname.replace(/\/$/, '') === '/techstartup';
   // App views: 'landing' | 'login' | 'dashboard' | 'join' | 'room' | 'summary' | 'live-participant'
   const [view, setView] = useState<'landing' | 'login' | 'dashboard' | 'admin' | 'join' | 'room' | 'summary' | 'live-participant'>('landing');
   const [authRole, setAuthRole] = useState<'educator' | 'student' | 'admin'>('student');
@@ -202,6 +204,10 @@ export default function App() {
   const handleBackToMap = () => {
     setView('room');
   };
+
+  if (isTechStartupPage) {
+    return <TechStartupLanding />;
+  }
 
   if (!licenseChecked) {
     return <div className="min-h-[100dvh] bg-slate-950 flex items-center justify-center text-slate-400 text-sm">Checking EzMindSphere activation…</div>;
