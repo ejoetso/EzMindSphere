@@ -2,11 +2,11 @@ import type { Config } from '@netlify/functions';
 import { getStore } from '@netlify/blobs';
 import jwt from 'jsonwebtoken';
 
-type State = { sessions: any[]; maps: Record<string, any>; liveSessions: any[]; activities: any[]; participants: any[]; responses: any[]; questions: any[] };
-const empty = (): State => ({ sessions: [], maps: {}, liveSessions: [], activities: [], participants: [], responses: [], questions: [] });
+type State = { users: any[]; sessions: any[]; maps: Record<string, any>; liveSessions: any[]; activities: any[]; participants: any[]; responses: any[]; questions: any[] };
+const empty = (): State => ({ users: [], sessions: [], maps: {}, liveSessions: [], activities: [], participants: [], responses: [], questions: [] });
 const json = (body: unknown, status = 200) => Response.json(body, { status });
 const store = () => getStore('cloud-platform');
-const load = async () => (await store().get('state', { type: 'json', consistency: 'strong' }) as State | null) || empty();
+const load = async () => { const state = (await store().get('state', { type: 'json', consistency: 'strong' }) as State | null) || empty(); state.users ||= []; return state; };
 const save = async (state: State) => store().setJSON('state', state);
 const bodyOf = async (request: Request) => { try { return await request.json() as any; } catch { return {}; } };
 const userOf = (request: Request) => {
@@ -17,11 +17,44 @@ const userOf = (request: Request) => {
   } catch { return null; }
 };
 const id = (prefix: string) => `${prefix}_${Date.now()}_${crypto.randomUUID().slice(0, 5)}`;
+const hash = async (value: string) => Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value)))).map(b => b.toString(16).padStart(2, '0')).join('');
+const publicUser = ({ passwordHash: _passwordHash, ...user }: any) => user;
 
 export default async (request: Request) => {
   const url = new URL(request.url), path = url.pathname, method = request.method;
   const state = await load();
   const user = userOf(request);
+
+  if (path === '/api/admin/users' && method === 'GET') {
+    if (!user || user.role !== 'admin') return json({ error: 'Administrator access required' }, 403);
+    const defaults = [{ id: 'u_admin_ejoe', name: 'Ejoe Tso', email: process.env.ADMIN_EMAIL || 'ejoe@ejoe.com', role: 'admin', disabled: false }, { id: 'u_educator_ezmindsphere', name: 'EzMindSphere Educator', email: process.env.EDUCATOR_USERNAME || 'ezmindsphere', role: 'educator', disabled: false }];
+    return json([...defaults, ...state.users].filter((item, index, all) => all.findIndex(x => x.id === item.id) === index).map(publicUser));
+  }
+  if (path === '/api/admin/users' && method === 'POST') {
+    if (!user || user.role !== 'admin') return json({ error: 'Administrator access required' }, 403);
+    const b = await bodyOf(request), email = String(b.email || '').trim().toLowerCase();
+    if (!b.name || !email || !b.password) return json({ error: 'Name, email, and password are required.' }, 400);
+    if (!['educator','admin'].includes(b.role || 'educator')) return json({ error: 'Managed accounts must be educators or administrators.' }, 400);
+    if (String(b.password).length < 8) return json({ error: 'Password must be at least 8 characters.' }, 400);
+    if (state.users.some(x => x.email === email) || ['ejoe@ejoe.com','ezmindsphere'].includes(email)) return json({ error: 'An account with this email already exists.' }, 409);
+    const created = { id: id(`u_${b.role || 'educator'}`), name: String(b.name).trim(), email, role: b.role || 'educator', disabled: false, passwordHash: await hash(String(b.password)) };
+    state.users.push(created); await save(state); return json(publicUser(created), 201);
+  }
+  const adminUserMatch = path.match(/^\/api\/admin\/users\/([^/]+)$/);
+  if (adminUserMatch && method === 'PATCH') {
+    if (!user || user.role !== 'admin') return json({ error: 'Administrator access required' }, 403);
+    const index = state.users.findIndex(x => x.id === adminUserMatch[1]); if (index < 0) return json({ error: 'Account not found.' }, 404);
+    const b = await bodyOf(request); if (b.password && String(b.password).length < 8) return json({ error: 'Password must be at least 8 characters.' }, 400);
+    if (b.role && !['educator','admin'].includes(b.role)) return json({ error: 'Managed accounts must be educators or administrators.' }, 400);
+    const updates: any = { ...b }; if (b.password) { updates.passwordHash = await hash(String(b.password)); delete updates.password; }
+    state.users[index] = { ...state.users[index], ...updates }; await save(state); return json(publicUser(state.users[index]));
+  }
+  if (adminUserMatch && method === 'DELETE') {
+    if (!user || user.role !== 'admin') return json({ error: 'Administrator access required' }, 403);
+    const before = state.users.length; state.users = state.users.filter(x => x.id !== adminUserMatch[1]);
+    if (state.users.length === before) return json({ error: 'Account not found.' }, 404);
+    await save(state); return json({ success: true });
+  }
 
   if (path === '/api/educator/metrics' && method === 'GET') {
     if (!user) return json({ error: 'Access token required' }, 401);
@@ -97,4 +130,4 @@ export default async (request: Request) => {
   return json({ error: 'Cloud API route not implemented', path }, 404);
 };
 
-export const config: Config = { path: ['/api/educator/*','/api/sessions','/api/sessions/*','/api/maps/*','/api/cloud/*','/api/live/*'] };
+export const config: Config = { path: ['/api/admin/*','/api/educator/*','/api/sessions','/api/sessions/*','/api/maps/*','/api/cloud/*','/api/live/*'] };

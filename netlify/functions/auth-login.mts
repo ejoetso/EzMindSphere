@@ -1,7 +1,9 @@
 import type { Config } from '@netlify/functions';
+import { getStore } from '@netlify/blobs';
 import jwt from 'jsonwebtoken';
 
 const json = (body: unknown, status = 200) => Response.json(body, { status });
+const hash = async (value: string) => Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value)))).map(b => b.toString(16).padStart(2, '0')).join('');
 
 export default async (request: Request) => {
   if (request.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
@@ -28,6 +30,12 @@ export default async (request: Request) => {
       user = { id: 'u_educator_ezmindsphere', name: 'EzMindSphere Educator', email: educatorLogin, role: 'educator' };
     } else if (login === adminLogin && password === adminPassword) {
       user = { id: 'u_admin_ejoe', name: 'Ejoe Tso', email: adminLogin, role: 'admin' };
+    }
+
+    if (!user && login) {
+      const state = await getStore('cloud-platform').get('state', { type: 'json', consistency: 'strong' }) as any;
+      const managed = state?.users?.find((item: any) => item.email === login);
+      if (managed && !managed.disabled && managed.passwordHash === await hash(String(password || ''))) user = { id: managed.id, name: managed.name, email: managed.email, role: managed.role };
     }
 
     if (!user) return json({ error: 'Incorrect credentials/password.' }, 401);
