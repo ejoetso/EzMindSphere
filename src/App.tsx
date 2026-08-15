@@ -241,6 +241,7 @@ export default function App() {
           onAuthSuccess={handleAuthSuccess}
           onBackToLanding={handleBackToLanding}
           hideBackToMain={isCloudApp}
+          cloudTrialMode={isCloudApp}
         />
       )}
 

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Mail, Lock, User, ArrowRight, Brain, Sparkles, ArrowLeft } from 'lucide-react';
 import { User as UserType } from '../types.js';
 
@@ -12,6 +12,7 @@ interface LoginFormProps {
   onAuthSuccess: (user: UserType) => void;
   onBackToLanding: () => void;
   hideBackToMain?: boolean;
+  cloudTrialMode?: boolean;
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({
@@ -19,7 +20,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   onAuthSuccess,
   onBackToLanding,
   hideBackToMain = false,
+  cloudTrialMode = false,
 }) => {
+  const googleButtonRef = useRef<HTMLDivElement>(null);
   const [role, setRole] = useState<'educator' | 'student' | 'admin'>(initialRole);
   const [isRegistering, setIsRegistering] = useState(false);
   
@@ -31,6 +34,36 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   // States
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!cloudTrialMode || !googleButtonRef.current) return;
+    const clientId = '284628551012-gm69vbvlmmlg47ns6t8nigkfpk6arlde.apps.googleusercontent.com';
+    const initialise = () => {
+      const google = (window as any).google;
+      if (!google?.accounts?.id || !googleButtonRef.current) return;
+      google.accounts.id.initialize({
+        client_id: clientId,
+        callback: async ({ credential }: { credential: string }) => {
+          setError(''); setLoading(true);
+          try {
+            const response = await fetch('/api/auth/google-trial', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ credential }) });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'Google trial sign-up failed');
+            localStorage.setItem('mindsphere_token', data.token);
+            localStorage.setItem('mindsphere_trial', JSON.stringify(data.trial));
+            onAuthSuccess(data.user);
+          } catch (trialError: any) { setError(trialError.message || 'Google trial sign-up failed'); }
+          finally { setLoading(false); }
+        },
+      });
+      google.accounts.id.renderButton(googleButtonRef.current, { theme: 'outline', size: 'large', text: 'signup_with', shape: 'pill', width: 336 });
+    };
+    if ((window as any).google?.accounts?.id) initialise();
+    else {
+      const script = document.createElement('script'); script.src = 'https://accounts.google.com/gsi/client'; script.async = true; script.onload = initialise; document.head.appendChild(script);
+      return () => script.remove();
+    }
+  }, [cloudTrialMode, onAuthSuccess]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,6 +134,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
               : 'Sign in to access your teacher\'s interactive mind map.'}
           </p>
         </div>
+        {cloudTrialMode && role === 'educator' && <div className="space-y-3"><div className="rounded-2xl border border-blue-200 bg-blue-50 p-4 text-center dark:border-blue-900 dark:bg-blue-950/30"><p className="text-sm font-bold text-blue-900 dark:text-blue-200">30-day educator trial</p><p className="mt-1 text-xs text-blue-700 dark:text-blue-300">Register with Google for educator access. No activation key required.</p></div><div ref={googleButtonRef} className="flex min-h-11 justify-center" /><div className="flex items-center gap-3"><span className="h-px flex-1 bg-slate-200 dark:bg-slate-700" /><span className="text-[11px] uppercase tracking-wider text-slate-400">or sign in</span><span className="h-px flex-1 bg-slate-200 dark:bg-slate-700" /></div></div>}
 
         {error && (
           <div className="bg-red-50 text-red-600 dark:bg-red-950/20 dark:text-red-400 text-xs p-3.5 border border-red-100 dark:border-red-900/40 rounded-xl font-medium">
