@@ -240,6 +240,7 @@ export default function App() {
           initialRole={authRole}
           onAuthSuccess={handleAuthSuccess}
           onBackToLanding={handleBackToLanding}
+          hideBackToMain={isCloudApp}
         />
       )}
 

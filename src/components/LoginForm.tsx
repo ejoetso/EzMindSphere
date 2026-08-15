@@ -11,12 +11,14 @@ interface LoginFormProps {
   initialRole: 'educator' | 'student' | 'admin';
   onAuthSuccess: (user: UserType) => void;
   onBackToLanding: () => void;
+  hideBackToMain?: boolean;
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({
   initialRole,
   onAuthSuccess,
   onBackToLanding,
+  hideBackToMain = false,
 }) => {
   const [role, setRole] = useState<'educator' | 'student' | 'admin'>(initialRole);
   const [isRegistering, setIsRegistering] = useState(false);
@@ -68,7 +70,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     <div className="min-h-screen bg-[#F3F5F9] dark:bg-slate-950 flex flex-col justify-between font-sans p-4 gap-4">
       
       {/* Top navbar */}
-      <header className="flex items-center justify-between bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 px-6 py-3">
+      {!hideBackToMain && <header className="flex items-center justify-between bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 px-6 py-3">
         <button
           onClick={onBackToLanding}
           className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-100 transition-colors"
@@ -76,7 +78,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           <ArrowLeft className="w-4 h-4" />
           Back to Main
         </button>
-      </header>
+      </header>}
 
       {/* Main Authentication Box */}
       <main className="max-w-md w-full mx-auto p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-xl space-y-6 my-auto">
