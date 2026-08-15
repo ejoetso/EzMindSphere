@@ -1,5 +1,5 @@
-import React from 'react';
-import { ArrowRight, BarChart3, BrainCircuit, CheckCircle2, Clock3, GitBranch, GraduationCap, Layers3, PlayCircle, QrCode, ShieldCheck, Sparkles, Users } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowRight, BarChart3, BrainCircuit, CheckCircle2, Clock3, Github, GitBranch, GraduationCap, Layers3, PlayCircle, QrCode, ShieldCheck, Sparkles, Users } from 'lucide-react';
 
 const features = [
   { icon: BrainCircuit, title: 'Visual knowledge', copy: 'Turn classroom ideas into clear, collaborative mind maps in real time.' },
@@ -19,12 +19,29 @@ const demos = [
 ];
 
 export function TechStartupLanding() {
+  const [formState, setFormState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+
+  const submitLicenceRequest = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setFormState('sending');
+    const form = event.currentTarget;
+    const body = new URLSearchParams(new FormData(form) as any).toString();
+    try {
+      const response = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
+      if (!response.ok) throw new Error('Submission failed');
+      form.reset();
+      setFormState('sent');
+    } catch {
+      setFormState('error');
+    }
+  };
+
   return (
     <main className="min-h-[100dvh] overflow-hidden bg-[#07111f] text-white selection:bg-cyan-300 selection:text-slate-950">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[650px] bg-[radial-gradient(circle_at_70%_15%,rgba(34,211,238,.18),transparent_38%),radial-gradient(circle_at_18%_20%,rgba(99,102,241,.22),transparent_34%)]" />
       <nav className="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-5 py-6 sm:px-8">
         <a href="/techstartup" className="flex items-center gap-3 text-xl font-black tracking-tight"><span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-cyan-300 to-indigo-500 text-slate-950"><BrainCircuit size={22} /></span>EzMindSphere</a>
-        <div className="flex items-center gap-3"><a href="#product" className="hidden text-sm font-semibold text-slate-300 hover:text-white sm:block">Product</a><a href="#demo" className="hidden text-sm font-semibold text-slate-300 hover:text-white md:block">Demos</a><a href="#license" className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-bold">Free licence</a></div>
+        <div className="flex items-center gap-3"><a href="#product" className="hidden text-sm font-semibold text-slate-300 hover:text-white sm:block">Product</a><a href="#demo" className="hidden text-sm font-semibold text-slate-300 hover:text-white md:block">Demos</a><a href="https://github.com/ejoetso/EzMindSphere" target="_blank" rel="noreferrer" className="hidden items-center gap-1.5 text-sm font-semibold text-slate-300 hover:text-white lg:flex"><Github size={16} /> GitHub</a><a href="#license" className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-bold">Free licence</a></div>
       </nav>
 
       <section className="relative mx-auto grid max-w-7xl items-center gap-14 px-5 pb-20 pt-14 sm:px-8 lg:grid-cols-[1.05fr_.95fr] lg:pb-28 lg:pt-20">
@@ -32,7 +49,7 @@ export function TechStartupLanding() {
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[.18em] text-cyan-200"><Sparkles size={14} /> The visual learning platform</div>
           <h1 className="max-w-3xl text-5xl font-black leading-[.96] tracking-[-.055em] sm:text-6xl lg:text-7xl">Make every classroom idea <span className="bg-gradient-to-r from-cyan-300 via-sky-300 to-indigo-400 bg-clip-text text-transparent">visible.</span></h1>
           <p className="mt-7 max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">EzMindSphere helps educators build knowledge together, understand participation live and turn each session into a lasting learning resource—self-hosted at your institution or delivered as a managed cloud platform.</p>
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row"><a href="/" className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-cyan-300 px-6 py-3.5 font-black text-slate-950 shadow-xl shadow-cyan-500/20 transition hover:-translate-y-0.5">Open the platform <ArrowRight size={19} /></a><a href="#demo" className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/5 px-6 py-3.5 font-bold"><PlayCircle size={19} /> See the experience</a></div>
+          <div className="mt-9 flex flex-col gap-3 sm:flex-row"><a href="https://ezmindsphere.netlify.app" className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-cyan-300 px-6 py-3.5 font-black text-slate-950 shadow-xl shadow-cyan-500/20 transition hover:-translate-y-0.5">Cloud access <ArrowRight size={19} /></a><a href="https://github.com/ejoetso/EzMindSphere" target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/5 px-6 py-3.5 font-bold"><Github size={19} /> GitHub</a></div>
           <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm text-slate-400"><span className="flex items-center gap-2"><CheckCircle2 size={16} className="text-emerald-400" /> Free for eligible education</span><span className="flex items-center gap-2"><CheckCircle2 size={16} className="text-emerald-400" /> Mobile friendly</span></div>
         </div>
 
@@ -57,7 +74,19 @@ export function TechStartupLanding() {
         </div>
       </section>
 
-      <section id="license" className="mx-auto max-w-7xl px-5 pb-20 sm:px-8 lg:pb-28"><div className="overflow-hidden rounded-[2rem] bg-gradient-to-br from-cyan-300 to-indigo-500 p-[1px]"><div className="rounded-[calc(2rem-1px)] bg-[#0b1627] px-6 py-12 text-center sm:px-12 sm:py-16"><p className="text-sm font-black uppercase tracking-[.2em] text-cyan-300">Educational institution programme</p><h2 className="mt-4 text-3xl font-black tracking-tight sm:text-5xl">Request your free institution licence.</h2><p className="mx-auto mt-4 max-w-2xl text-slate-300">Eligible schools, colleges, universities, training centres and non-profit educational institutions can request an EzMindSphere activation key at no licence cost.</p><div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row"><a href="mailto:eozoe2025@gmail.com?subject=Free%20EzMindSphere%20Institution%20Licence&body=Institution%20name%3A%0AInstitution%20type%3A%0ACountry%3A%0AContact%20name%3A%0AIntended%20educational%20use%3A" className="rounded-2xl bg-white px-6 py-3.5 font-black text-slate-950">Request free institution licence</a><a href="/" className="rounded-2xl border border-white/20 px-6 py-3.5 font-bold">Launch EzMindSphere</a></div><p className="mt-5 text-sm text-slate-500">Requests are sent to eozoe2025@gmail.com</p></div></div></section>
+      <section id="license" className="mx-auto max-w-7xl px-5 pb-20 sm:px-8 lg:pb-28"><div className="overflow-hidden rounded-[2rem] bg-gradient-to-br from-cyan-300 to-indigo-500 p-[1px]"><div className="rounded-[calc(2rem-1px)] bg-[#0b1627] px-6 py-12 sm:px-12 sm:py-16"><div className="mx-auto max-w-3xl text-center"><p className="text-sm font-black uppercase tracking-[.2em] text-cyan-300">Educational institution programme</p><h2 className="mt-4 text-3xl font-black tracking-tight sm:text-5xl">Request your free institution licence.</h2><p className="mx-auto mt-4 max-w-2xl text-slate-300">Eligible schools, colleges, universities, training centres and non-profit educational institutions can request an EzMindSphere activation key at no licence cost.</p></div>
+        {formState === 'sent' ? <div className="mx-auto mt-9 max-w-2xl rounded-2xl border border-emerald-400/30 bg-emerald-400/10 p-6 text-center"><CheckCircle2 className="mx-auto text-emerald-300" size={32} /><h3 className="mt-3 text-xl font-black">Request received</h3><p className="mt-2 text-slate-300">Thank you. We’ll review your educational institution request and reply by email.</p></div> :
+        <form name="institution-license" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" onSubmit={submitLicenceRequest} className="mx-auto mt-9 grid max-w-3xl gap-4 sm:grid-cols-2">
+          <input type="hidden" name="form-name" value="institution-license" /><p className="hidden"><label>Do not fill this out: <input name="bot-field" /></label></p>
+          <label className="text-sm font-bold text-slate-300">Institution name<input required name="institution" className="mt-2 w-full rounded-xl border border-white/15 bg-white/[.06] px-4 py-3 text-white outline-none focus:border-cyan-300" /></label>
+          <label className="text-sm font-bold text-slate-300">Institution type<select required name="institutionType" className="mt-2 w-full rounded-xl border border-white/15 bg-[#111e30] px-4 py-3 text-white outline-none focus:border-cyan-300"><option value="">Select type</option><option>School</option><option>College</option><option>University</option><option>Training centre</option><option>Non-profit education</option></select></label>
+          <label className="text-sm font-bold text-slate-300">Country<input required name="country" className="mt-2 w-full rounded-xl border border-white/15 bg-white/[.06] px-4 py-3 text-white outline-none focus:border-cyan-300" /></label>
+          <label className="text-sm font-bold text-slate-300">Contact name<input required name="contactName" className="mt-2 w-full rounded-xl border border-white/15 bg-white/[.06] px-4 py-3 text-white outline-none focus:border-cyan-300" /></label>
+          <label className="text-sm font-bold text-slate-300 sm:col-span-2">Contact email<input required type="email" name="email" className="mt-2 w-full rounded-xl border border-white/15 bg-white/[.06] px-4 py-3 text-white outline-none focus:border-cyan-300" /></label>
+          <label className="text-sm font-bold text-slate-300 sm:col-span-2">Intended educational use<textarea required name="intendedUse" rows={4} className="mt-2 w-full resize-y rounded-xl border border-white/15 bg-white/[.06] px-4 py-3 text-white outline-none focus:border-cyan-300" /></label>
+          <div className="sm:col-span-2"><button disabled={formState === 'sending'} className="w-full rounded-2xl bg-white px-6 py-3.5 font-black text-slate-950 disabled:opacity-60">{formState === 'sending' ? 'Sending request…' : 'Request free institution licence'}</button>{formState === 'error' && <p className="mt-3 text-center text-sm text-rose-300">The form could not be sent. Email eozoe2025@gmail.com for assistance.</p>}</div>
+        </form>}
+        <p className="mt-5 text-center text-sm text-slate-500">Requests are securely collected by Netlify Forms and reviewed by EzMindSphere.</p></div></div></section>
       <footer className="border-t border-white/10 px-5 py-8 text-center text-sm text-slate-500">Copyright © 2026 Ejoe Tso · EzMindSphere · Free for eligible educational institutions</footer>
     </main>
   );

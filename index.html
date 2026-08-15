@@ -6,6 +6,16 @@
     <title>EzMindSphere</title>
   </head>
   <body>
+    <!-- Static form declaration allows Netlify to register the React-rendered form at deploy time. -->
+    <form name="institution-license" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input name="bot-field" />
+      <input name="institution" />
+      <input name="institutionType" />
+      <input name="country" />
+      <input name="contactName" />
+      <input name="email" type="email" />
+      <textarea name="intendedUse"></textarea>
+    </form>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
