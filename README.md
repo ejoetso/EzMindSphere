@@ -12,10 +12,6 @@
 
 </div>
 
-EzMindSphere is a self-hosted and cloud-ready collaborative learning platform for educators, students and educational institutions. It combines visual mind maps, live classroom interaction, Poll Maker, Q&A, learning activities, QR joining, educator analytics and optional Gemini-powered learning tools.
-
-For educational licensing, cloud implementation, integrations or collaboration, email **eozoe2025@gmail.com**.
-
 ## Product demos
 
 ### [▶ Watch the EzMindSphere implementation overview](docs/videos/EzMindSphere-implementation-overview.mp4)
@@ -29,6 +25,10 @@ For educational licensing, cloud implementation, integrations or collaboration, 
 | [![Educator demo](public/demos/educator-screenshot.png)](docs/videos/EzMindSphere-educator-demo.mp4) | [![Student demo](public/demos/student-screenshot.png)](docs/videos/EzMindSphere-student-demo.mp4) |
 
 Select a screenshot to watch or download its complete walkthrough.
+
+EzMindSphere is a self-hosted and cloud-ready collaborative learning platform for educators, students and educational institutions. It combines visual mind maps, live classroom interaction, Poll Maker, Q&A, learning activities, QR joining, educator analytics and optional Gemini-powered learning tools.
+
+For educational licensing, cloud implementation, integrations or collaboration, email **eozoe2025@gmail.com**.
 
 ## Copyright and educational usage
 
