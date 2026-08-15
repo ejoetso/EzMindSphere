@@ -87,11 +87,17 @@ export default async (request: Request) => {
   const mapMatch = path.match(/^\/api\/maps\/([^/]+)$/);
   if (mapMatch && method === 'GET') { const map = state.maps[mapMatch[1]]; return map ? json(map) : json({ error: 'Session not found' }, 404); }
   const realtimeMatch = path.match(/^\/api\/cloud\/realtime\/([^/]+)$/);
-  if (realtimeMatch && method === 'GET') { const map = state.maps[realtimeMatch[1]]; return map ? json(map) : json({ error: 'Session not found' }, 404); }
+  if (realtimeMatch && method === 'GET') { const map = state.maps[realtimeMatch[1]]; return map ? json({ ...map, participants: state.participants.filter(p => p.sessionId === realtimeMatch[1] && p.kind === 'mindmap') }) : json({ error: 'Session not found' }, 404); }
   if (realtimeMatch && method === 'POST') {
     const b = await bodyOf(request), map = state.maps[realtimeMatch[1]];
     if (!map) return json({ error: 'Session not found' }, 404);
     const d = b.data || {};
+    if (b.event === 'session:join') {
+      const existing = state.participants.findIndex(p => p.sessionId === realtimeMatch[1] && p.userId === d.userId && p.kind === 'mindmap');
+      const participant = { id: `participant_${d.userId}`, sessionId: realtimeMatch[1], userId: d.userId, name: d.name, role: d.role, kind: 'mindmap', joinedAt: new Date().toISOString(), lastSeenAt: new Date().toISOString() };
+      if (existing >= 0) state.participants[existing] = { ...state.participants[existing], ...participant, joinedAt: state.participants[existing].joinedAt };
+      else state.participants.push(participant);
+    }
     if (b.event === 'node:create') map.nodes.push(d.node);
     if (b.event === 'node:update') map.nodes = map.nodes.map((n:any) => n.id === d.node.id ? {...n,...d.node} : n);
     if (b.event === 'node:drag') map.nodes = map.nodes.map((n:any) => n.id === d.nodeId ? {...n,x:d.x,y:d.y,z:d.z ?? n.z} : n);

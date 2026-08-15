@@ -61,15 +61,19 @@ export function useRealtimeSession(): UseRealtimeSessionReturn {
 
   const socketRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const cloudPollIntervalRef = useRef<number | null>(null);
   const activeUserRef = useRef<User | null>(null);
   const activeSessionIdRef = useRef<string | null>(null);
 
   // Connection handler
   const connect = useCallback((sessionId: string, user: User) => {
     if (cloudMode) {
-      fetch(`/api/cloud/realtime/${sessionId}`).then(r => r.json()).then(data => {
-        if (data.session) { setSession(data.session); setNodes(data.nodes || []); setEdges(data.edges || []); setMemos(data.memos || []); setActivities(data.activities || []); setActiveActivityId(data.session.activeActivityId || null); setConnected(true); }
+      if (cloudPollIntervalRef.current) window.clearInterval(cloudPollIntervalRef.current);
+      const sync = () => fetch(`/api/cloud/realtime/${sessionId}`, { cache: 'no-store' }).then(r => r.json()).then(data => {
+        if (data.session) { setSession(data.session); setNodes(data.nodes || []); setEdges(data.edges || []); setMemos(data.memos || []); setActivities(data.activities || []); setParticipants(data.participants || []); setActiveActivityId(data.session.activeActivityId || null); setConnected(true); }
       }).catch(() => setConnected(false));
+      fetch(`/api/cloud/realtime/${sessionId}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: 'session:join', data: { sessionId, userId: user.id, name: user.name, role: user.role } }) }).then(sync).catch(() => setConnected(false));
+      cloudPollIntervalRef.current = window.setInterval(sync, 1500);
       return;
     }
     if (socketRef.current) {
@@ -351,6 +355,9 @@ export function useRealtimeSession(): UseRealtimeSessionReturn {
       }
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
+      }
+      if (cloudPollIntervalRef.current) {
+        window.clearInterval(cloudPollIntervalRef.current);
       }
     };
   }, []);
