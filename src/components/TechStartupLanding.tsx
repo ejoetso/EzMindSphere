@@ -40,7 +40,7 @@ export function TechStartupLanding() {
     <main className="min-h-[100dvh] overflow-hidden bg-[#07111f] text-white selection:bg-cyan-300 selection:text-slate-950">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[650px] bg-[radial-gradient(circle_at_70%_15%,rgba(34,211,238,.18),transparent_38%),radial-gradient(circle_at_18%_20%,rgba(99,102,241,.22),transparent_34%)]" />
       <nav className="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-5 py-6 sm:px-8">
-        <a href="/techstartup" className="flex items-center gap-3 text-xl font-black tracking-tight"><span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-cyan-300 to-indigo-500 text-slate-950"><BrainCircuit size={22} /></span>EzMindSphere</a>
+        <a href="/techstartup" className="flex items-center gap-3 text-xl font-black tracking-tight"><img src="/ezmindsphere-logo.png" alt="EzMindSphere" className="h-11 w-11 rounded-xl object-cover" />EzMindSphere</a>
         <div className="flex items-center gap-3"><a href="#product" className="hidden text-sm font-semibold text-slate-300 hover:text-white sm:block">Product</a><a href="#demo" className="hidden text-sm font-semibold text-slate-300 hover:text-white md:block">Demos</a><a href="https://github.com/ejoetso/EzMindSphere" target="_blank" rel="noreferrer" className="hidden items-center gap-1.5 text-sm font-semibold text-slate-300 hover:text-white lg:flex"><Github size={16} /> GitHub</a><a href="#license" className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-bold">Free licence</a></div>
       </nav>
 

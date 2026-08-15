@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Brain, LogOut, Plus, RefreshCw, ShieldCheck, UserCog, Users } from 'lucide-react';
+import { LogOut, Plus, RefreshCw, ShieldCheck, UserCog, Users } from 'lucide-react';
 import { User } from '../types.js';
 
 interface AdminDashboardProps {
@@ -88,7 +88,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser, onL
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 text-slate-800 dark:text-slate-100">
       <header className="max-w-7xl mx-auto flex items-center justify-between bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl px-6 py-4 shadow-sm">
         <div className="flex items-center gap-3">
-          <span className="p-2 rounded-xl bg-violet-600 text-white"><Brain className="w-5 h-5" /></span>
+          <img src="/ezmindsphere-logo.png" alt="EzMindSphere" className="h-10 w-10 rounded-xl object-cover" />
           <div>
             <h1 className="font-bold">MindSphere Administration</h1>
             <p className="text-xs text-slate-500">Signed in as {currentUser.name}</p>

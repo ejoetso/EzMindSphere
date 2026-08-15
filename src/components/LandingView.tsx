@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { Brain, ArrowRight, Layers, Users, Sparkles, Monitor, Clipboard, Eye, Download, CheckCircle, Smartphone, MessageSquare, QrCode } from 'lucide-react';
+import { ArrowRight, Layers, Users, Sparkles, Monitor, Clipboard, Eye, Download, CheckCircle, Smartphone, MessageSquare, QrCode } from 'lucide-react';
 import { QRScannerModal } from './QRScannerModal';
 
 interface LandingViewProps {
@@ -40,7 +40,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
         <div className="w-full flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
             <span className="p-1.5 bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 rounded-xl">
-              <Brain className="w-5 h-5" />
+              <img src="/ezmindsphere-logo.png" alt="EzMindSphere" className="h-10 w-10 rounded-xl object-cover" />
             </span>
             <span className="font-display font-bold text-sm sm:text-lg tracking-tight text-slate-900 dark:text-white leading-tight">
               EzMindSphere
@@ -292,7 +292,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
       <footer className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-150 dark:border-slate-850 p-6 text-center text-xs text-slate-400 dark:text-slate-500 shadow-sm mt-auto">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-slate-800 dark:text-slate-200 font-bold font-display">
-            <Brain className="w-4.5 h-4.5" />
+            <img src="/ezmindsphere-logo.png" alt="EzMindSphere" className="h-8 w-8 rounded-lg object-cover" />
             <span>EzMindSphere</span>
           </div>
           <p>Copyright © 2026 Ejoe Tso · EzMindSphere is free for eligible educational institutions.</p>

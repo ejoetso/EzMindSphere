@@ -37,7 +37,7 @@ export const ActivationScreen: React.FC<ActivationScreenProps> = ({ onActivated 
       <section className="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
         <div className="text-center space-y-3">
           <span className="inline-flex p-3 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 shadow-lg shadow-indigo-500/20"><KeyRound className="w-7 h-7" /></span>
-          <div><h1 className="text-2xl font-extrabold">Activate EzMindSphere</h1><p className="text-sm text-slate-400 mt-1">Free activation for eligible educational institutions.</p></div>
+          <img src="/ezmindsphere-logo.png" alt="EzMindSphere" className="h-20 w-20 rounded-2xl object-cover shadow-lg" /><div><h1 className="text-2xl font-extrabold">Activate EzMindSphere</h1><p className="text-sm text-slate-400 mt-1">Free activation for eligible educational institutions.</p></div>
         </div>
 
         {error && <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs">{error}</div>}

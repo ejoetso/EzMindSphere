@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="public/ezmindsphere-logo.png" alt="EzMindSphere" width="220" />
+
 # EzMindSphere
 
 ### Visual mind mapping, live interaction and classroom intelligence

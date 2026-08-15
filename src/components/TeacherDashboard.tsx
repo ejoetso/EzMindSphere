@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Play, Calendar, Users, ShieldAlert, CheckSquare, Settings, LogOut, ArrowLeft, Brain, Sparkles, BookOpen, Trash2, Radio, MessageSquare, QrCode, Clock3, ClipboardCheck } from 'lucide-react';
+import { Plus, Play, Calendar, Users, ShieldAlert, CheckSquare, Settings, LogOut, ArrowLeft, Sparkles, BookOpen, Trash2, Radio, MessageSquare, QrCode, Clock3, ClipboardCheck } from 'lucide-react';
 import { User, Session, LiveInteractionSession } from '../types.js';
 import { LiveInteractionConsole } from './LiveInteractionConsole.js';
 
@@ -241,7 +241,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
             </button>
             <div className="flex items-center gap-2">
               <span className="p-1 bg-blue-600 text-white rounded-lg">
-                <Brain className="w-4 h-4" />
+                <img src="/ezmindsphere-logo.png" alt="EzMindSphere" className="h-9 w-9 rounded-lg object-cover" />
               </span>
               <span className="font-display font-bold text-slate-900 dark:text-slate-100">
                 EzMindSphere
@@ -389,7 +389,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
         <div className="lg:col-span-4 space-y-6">
           <div className="bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-6 rounded-3xl shadow-lg relative overflow-hidden space-y-4">
             <div className="absolute top-0 right-0 p-4 opacity-10">
-              <Brain className="w-24 h-24" />
+              <img src="/ezmindsphere-logo.png" alt="EzMindSphere" className="h-28 w-28 rounded-3xl object-cover shadow-xl" />
             </div>
             
             <h2 className="text-xl font-display font-bold">Classroom Central</h2>

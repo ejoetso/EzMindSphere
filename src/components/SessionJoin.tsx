@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { ArrowRight, ArrowLeft, Brain, User, Key, Users, Sparkles, ShieldCheck, RefreshCw, QrCode } from 'lucide-react';
+import { ArrowRight, ArrowLeft, User, Key, Users, Sparkles, ShieldCheck, RefreshCw, QrCode } from 'lucide-react';
 import { QRScannerModal } from './QRScannerModal';
 
 interface SessionJoinProps {
@@ -142,7 +142,7 @@ export const SessionJoin: React.FC<SessionJoinProps> = ({
       <main className="max-w-md w-full mx-auto p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-lg space-y-6 my-auto">
         <div className="text-center space-y-2">
           <span className="p-2 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 rounded-2xl inline-block">
-            <Brain className="w-6 h-6" />
+            <img src="/ezmindsphere-logo.png" alt="EzMindSphere" className="h-10 w-10 rounded-xl object-cover" />
           </span>
           <h2 className="text-xl font-bold font-display text-slate-900 dark:text-slate-100">
             Join Collaborative Board

@@ -4,7 +4,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Mail, Lock, User, ArrowRight, Brain, Sparkles, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, Sparkles, ArrowLeft } from 'lucide-react';
 import { User as UserType } from '../types.js';
 
 interface LoginFormProps {
@@ -116,9 +116,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       {/* Main Authentication Box */}
       <main className="max-w-md w-full mx-auto p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-xl space-y-6 my-auto">
         <div className="text-center space-y-2">
-          <span className="p-2 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 rounded-2xl inline-block">
-            <Brain className="w-6 h-6" />
-          </span>
+          <img src="/ezmindsphere-logo.png" alt="EzMindSphere" className="mx-auto h-20 w-20 rounded-2xl object-cover shadow-lg" />
           <h2 className="text-xl font-bold font-display text-slate-900 dark:text-slate-100">
             {role === 'admin'
               ? 'Administrator Sign-In'
