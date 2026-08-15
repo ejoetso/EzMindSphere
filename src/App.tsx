@@ -23,8 +23,8 @@ export default function App() {
   const isCloudApp = isLandingHost && currentPath === '/app';
   const isTechStartupPage = currentPath === '/techstartup' || (isLandingHost && currentPath !== '/app');
   // App views: 'landing' | 'login' | 'dashboard' | 'join' | 'room' | 'summary' | 'live-participant'
-  const [view, setView] = useState<'landing' | 'login' | 'dashboard' | 'admin' | 'join' | 'room' | 'summary' | 'live-participant'>('landing');
-  const [authRole, setAuthRole] = useState<'educator' | 'student' | 'admin'>('student');
+  const [view, setView] = useState<'landing' | 'login' | 'dashboard' | 'admin' | 'join' | 'room' | 'summary' | 'live-participant'>(isCloudApp ? 'login' : 'landing');
+  const [authRole, setAuthRole] = useState<'educator' | 'student' | 'admin'>(isCloudApp ? 'educator' : 'student');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [activeSession, setActiveSession] = useState<Session | null>(null);
   const [prefilledJoinCode, setPrefilledJoinCode] = useState('');
