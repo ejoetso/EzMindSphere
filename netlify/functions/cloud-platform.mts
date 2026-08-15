@@ -25,6 +25,11 @@ export default async (request: Request) => {
   const state = await load();
   const user = userOf(request);
 
+  if (path === '/api/config/share-url' && method === 'GET') {
+    const code = String(url.searchParams.get('code') || '').trim().toUpperCase().replace(/^(MIND|LIVE)-/, '');
+    return json({ baseUrl: `${url.origin}/app`, joinUrl: code ? `${url.origin}/app?code=${encodeURIComponent(code)}` : `${url.origin}/app` });
+  }
+
   if (path === '/api/admin/users' && method === 'GET') {
     if (!user || user.role !== 'admin') return json({ error: 'Administrator access required' }, 403);
     const defaults = [{ id: 'u_admin_ejoe', name: 'Ejoe Tso', email: process.env.ADMIN_EMAIL || 'ejoe@ejoe.com', role: 'admin', disabled: false }, { id: 'u_educator_ezmindsphere', name: 'EzMindSphere Educator', email: process.env.EDUCATOR_USERNAME || 'ezmindsphere', role: 'educator', disabled: false }];
@@ -73,7 +78,7 @@ export default async (request: Request) => {
     state.sessions.unshift(session); state.maps[sessionId] = { session, nodes: [], edges: [], memos: [], activities: [] }; await save(state); return json(session, 201);
   }
   if (path === '/api/sessions/join' && method === 'POST') {
-    const b = await bodyOf(request), session = state.sessions.find(s => s.code.toUpperCase() === String(b.code || '').toUpperCase());
+    const b = await bodyOf(request), submitted = String(b.code || '').trim().toUpperCase().replace(/^MIND-/, ''), session = state.sessions.find(s => String(s.code).toUpperCase().replace(/^MIND-/, '') === submitted);
     return session ? json({ session }) : json({ error: 'Active classroom session not found with this join code.' }, 404);
   }
   const sessionMatch = path.match(/^\/api\/sessions\/([^/]+)$/);
@@ -109,7 +114,7 @@ export default async (request: Request) => {
     const activities=[{id:id('act'),sessionId:sid,type:'multiple_choice',title:'Core Concept Check',description:'Select the best answer.',position:1,status:'draft',resultVisibility:'live',moderationMode:'none',options:['Option A','Option B','Option C','Not sure'].map((label,i)=>({id:id('opt'),activityId:'',label,position:i+1,isCorrect:i===0})),createdAt:now,updatedAt:now},{id:id('act'),sessionId:sid,type:'open_ended',title:'Key Insights & Ideas',description:'Share your key takeaway.',position:2,status:'draft',resultVisibility:'live',moderationMode:'none',createdAt:now,updatedAt:now},{id:id('act'),sessionId:sid,type:'qa',title:'Live Q&A Forum',description:'Ask and vote on questions.',position:3,status:'active',resultVisibility:'live',moderationMode:'none',createdAt:now,updatedAt:now}];
     state.liveSessions.unshift(session); state.activities.push(...activities); await save(state); return json({session,activities,joinUrl:`${url.origin}/app?code=${session.joinCode}`,qrCodeUrl:''},201);
   }
-  const codeMatch=path.match(/^\/api\/live\/code\/([^/]+)$/); if(codeMatch&&method==='GET'){const s=state.liveSessions.find(x=>x.joinCode===codeMatch[1]);return s?json({session:s,joinUrl:`${url.origin}/app?code=${s.joinCode}`,qrCodeUrl:''}):json({error:'Live session not found'},404);}
+  const codeMatch=path.match(/^\/api\/live\/code\/([^/]+)$/); if(codeMatch&&method==='GET'){const submitted=decodeURIComponent(codeMatch[1]).toUpperCase().replace(/^LIVE-/,''),s=state.liveSessions.find(x=>String(x.joinCode).toUpperCase().replace(/^LIVE-/,'')===submitted);return s?json({session:s,joinUrl:`${url.origin}/app?code=${encodeURIComponent(s.joinCode)}`,qrCodeUrl:''}):json({error:'Live session not found'},404);}
   const liveMatch=path.match(/^\/api\/live\/sessions\/([^/]+)$/);
   if(liveMatch&&method==='GET'){const s=state.liveSessions.find(x=>x.id===liveMatch[1]);if(!s)return json({error:'Session not found'},404);const acts=state.activities.filter(a=>a.sessionId===s.id);return json({session:s,activities:acts,participants:state.participants.filter(p=>p.sessionId===s.id),responsesMap:Object.fromEntries(acts.map(a=>[a.id,state.responses.filter(r=>r.activityId===a.id)])),clustersMap:{},audienceQuestions:state.questions.filter(q=>q.sessionId===s.id),resultLinks:[],joinUrl:`${url.origin}/app?code=${s.joinCode}`,qrCodeUrl:''});}
   if(liveMatch&&method==='PATCH'){const b=await bodyOf(request);state.liveSessions=state.liveSessions.map(s=>s.id===liveMatch[1]?{...s,...b,updatedAt:new Date().toISOString()}:s);await save(state);return json(state.liveSessions.find(s=>s.id===liveMatch[1]));}
@@ -130,4 +135,4 @@ export default async (request: Request) => {
   return json({ error: 'Cloud API route not implemented', path }, 404);
 };
 
-export const config: Config = { path: ['/api/admin/*','/api/educator/*','/api/sessions','/api/sessions/*','/api/maps/*','/api/cloud/*','/api/live/*'] };
+export const config: Config = { path: ['/api/config/*','/api/admin/*','/api/educator/*','/api/sessions','/api/sessions/*','/api/maps/*','/api/cloud/*','/api/live/*'] };

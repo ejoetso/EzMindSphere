@@ -24,6 +24,7 @@ export const MindMapQRModal: React.FC<MindMapQRModalProps> = ({
 
   useEffect(() => {
     if (!isOpen || !cleanCode) return;
+    setQrDataUrl('');
     fetch(`/api/config/share-url?code=${encodeURIComponent(cleanCode)}`)
       .then(response => {
         if (!response.ok) throw new Error('Unable to resolve network share URL.');
@@ -32,7 +33,8 @@ export const MindMapQRModal: React.FC<MindMapQRModalProps> = ({
       .then(data => setShareUrl(data.joinUrl))
       .catch(error => {
         console.error('Failed to resolve network share URL:', error);
-        setShareUrl('');
+        const cloudPath = ['ezmindsphere.ejoetso.com', 'ezmindsphere.netlify.app'].includes(window.location.hostname) ? '/app' : '';
+        setShareUrl(`${window.location.origin}${cloudPath}?code=${encodeURIComponent(cleanCode)}`);
       });
   }, [isOpen, cleanCode]);
 
