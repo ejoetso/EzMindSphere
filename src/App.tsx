@@ -19,15 +19,16 @@ import { User, Session } from './types.js';
 
 export default function App() {
   const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+  const initialJoinCode = new URLSearchParams(window.location.search).get('code') || new URLSearchParams(window.location.search).get('joinCode') || '';
   const isLandingHost = ['ezmindsphere.netlify.app', 'ezmindsphere.ejoetso.com'].includes(window.location.hostname);
   const isCloudApp = isLandingHost && currentPath === '/app';
   const isTechStartupPage = currentPath === '/techstartup' || (isLandingHost && currentPath !== '/app');
   // App views: 'landing' | 'login' | 'dashboard' | 'join' | 'room' | 'summary' | 'live-participant'
-  const [view, setView] = useState<'landing' | 'login' | 'dashboard' | 'admin' | 'join' | 'room' | 'summary' | 'live-participant'>(isCloudApp ? 'login' : 'landing');
-  const [authRole, setAuthRole] = useState<'educator' | 'student' | 'admin'>(isCloudApp ? 'educator' : 'student');
+  const [view, setView] = useState<'landing' | 'login' | 'dashboard' | 'admin' | 'join' | 'room' | 'summary' | 'live-participant'>(initialJoinCode ? (initialJoinCode.toUpperCase().startsWith('LIVE-') ? 'live-participant' : 'join') : (isCloudApp ? 'login' : 'landing'));
+  const [authRole, setAuthRole] = useState<'educator' | 'student' | 'admin'>(initialJoinCode ? 'student' : (isCloudApp ? 'educator' : 'student'));
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [activeSession, setActiveSession] = useState<Session | null>(null);
-  const [prefilledJoinCode, setPrefilledJoinCode] = useState('');
+  const [prefilledJoinCode, setPrefilledJoinCode] = useState(initialJoinCode);
   const [licenseChecked, setLicenseChecked] = useState(false);
   const [licenseActivated, setLicenseActivated] = useState(false);
 
@@ -81,6 +82,7 @@ export default function App() {
     const codeParam = urlParams.get('code') || urlParams.get('joinCode');
     if (codeParam) {
       handleJoinCodeEnter(codeParam);
+      return;
     }
 
     const token = localStorage.getItem('mindsphere_token');

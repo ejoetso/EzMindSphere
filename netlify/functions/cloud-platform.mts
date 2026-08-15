@@ -27,7 +27,7 @@ export default async (request: Request) => {
 
   if (path === '/api/config/share-url' && method === 'GET') {
     const code = String(url.searchParams.get('code') || '').trim().toUpperCase().replace(/^(MIND|LIVE)-/, '');
-    return json({ baseUrl: `${url.origin}/app`, joinUrl: code ? `${url.origin}/app?code=${encodeURIComponent(code)}` : `${url.origin}/app` });
+    return json({ baseUrl: `${url.origin}/app`, joinUrl: code ? `${url.origin}/app?joinCode=${encodeURIComponent(code)}` : `${url.origin}/app` });
   }
 
   if (path === '/api/admin/users' && method === 'GET') {
